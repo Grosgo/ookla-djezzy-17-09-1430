@@ -1,3 +1,8 @@
 node_modules/
+<<<<<<< HEAD
 .DS_Store
 *.log
+=======
+speedtest.exe
+inspection/
+>>>>>>> 163d7fd5c32c8de66b4c4e8a3428de51790adf3a

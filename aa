@@ -1,0 +1,67 @@
+const express = require('express');
+const { exec } = require('child_process');
+const path = require('path');
+const http = require('http');
+
+// --------- Config ---------
+const SERVER_ID = process.env.SERVER_ID || 32700;      // Djezzy Oran (per your find)
+const PORT = parseInt(process.env.PORT || '8080', 10); // main port serving your frontend
+const LEGACY_PORT = 3000;                              // extra port for hardcoded /speedtest calls
+const isWin = process.platform === 'win32';
+const SPEEDTEST_BIN = isWin ? `"${path.join(__dirname, 'speedtest.exe')}"` : 'speedtest';
+const FRONTEND_DIR = path.join(__dirname, 'frontend');
+
+// --------- Common handler ---------
+function runSpeedtest(res) {
+  const cmd = `${SPEEDTEST_BIN} --accept-license --accept-gdpr -s ${SERVER_ID} -f json`;
+  exec(cmd, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: err.message, stderr });
+    try {
+      const r = JSON.parse(stdout);
+      const payload = {
+        server: { id: SERVER_ID, name: r.server?.name, location: r.server?.location, host: r.server?.host },
+        ping_ms: r.ping?.latency,
+        jitter_ms: r.ping?.jitter,
+        download_Mbps: r.download ? (r.download.bandwidth * 8 / 1e6) : null,
+        upload_Mbps: r.upload ? (r.upload.bandwidth * 8 / 1e6) : null,
+        packetLoss: typeof r.packetLoss === 'number' ? r.packetLoss : null,
+        isp: r.isp || null,
+        interface: r.interface || null,
+        timestamp: r.timestamp
+      };
+      res.json(payload);
+    } catch {
+      res.status(500).json({ error: 'Parse error', sample: stdout ? stdout.slice(0, 2000) : '' });
+    }
+  });
+}
+
+// --------- App on main port (serves frontend) ---------
+const app = express();
+app.use(express.static(FRONTEND_DIR));
+app.get('/api/speedtest', (req, res) => runSpeedtest(res));
+// Also expose /speedtest here (so your UI works even if it calls relative path)
+app.get('/speedtest', (req, res) => runSpeedtest(res));
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
+  console.log(`Frontend served from ${FRONTEND_DIR}`);
+  console.log(`Main app:  http://localhost:${PORT}/`);
+  console.log(`API JSON:  http://localhost:${PORT}/api/speedtest`);
+  console.log(`Legacy map: http://localhost:${PORT}/speedtest`);
+});
+
+// --------- Minimal legacy server on port 3000 ---------
+// Some frontends hardcode http://localhost:3000/speedtest
+const legacy = express();
+// CORS for safety
+legacy.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
+legacy.get('/speedtest', (req, res) => runSpeedtest(res));
+
+const legacyServer = http.createServer(legacy);
+legacyServer.listen(LEGACY_PORT, () => {
+  console.log(`Legacy endpoint listening: http://localhost:${LEGACY_PORT}/speedtest`);
+});

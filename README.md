@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #  **[SpeedTest by OpenSpeedTest™](https://openspeedtest.com?Run&ref=Github)** - Free & Open-Source HTML5 Network Performance Estimation Tool.
 
   
@@ -494,3 +495,31 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+=======
+# Ookla test with your frontend unchanged
+
+- Frontend served from: `./frontend/` (files are **untouched**).
+- Backend: Node.js + Ookla Speedtest CLI (`/api/speedtest`), default server **DJEZZY (Algiers) ID 10432**.
+- Optional test page: `/ookla` (does not modify your files).
+
+## Run
+1) Install Node.js 18+
+2) Install Ookla CLI (Windows: download `speedtest.exe` from https://www.speedtest.net/apps/cli ; Linux: use packagecloud)
+3) Start:
+```bash
+npm install
+# Optional: override server if an Oran Djezzy ID appears in `speedtest -L`
+# Windows PowerShell:
+#   setx SERVER_ID 12345
+#   (then open a NEW PowerShell)
+# Linux/macOS:
+#   export SERVER_ID=12345
+npm start
+```
+- Open your original site: `http://localhost:8080/`
+- JSON endpoint: `http://localhost:8080/api/speedtest`
+- Optional UI: `http://localhost:8080/ookla`
+
+## Inspection Artifacts
+See the `inspection/` folder (manifest.csv, deep_inspection.json, deep_inspection_summary.md, tree.txt).
+>>>>>>> 163d7fd5c32c8de66b4c4e8a3428de51790adf3a

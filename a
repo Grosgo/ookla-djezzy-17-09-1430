@@ -1,0 +1,44 @@
+const express = require('express');
+const { exec } = require('child_process');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+// Default to the user's correct server ID (Oran/Djezzy): 32700
+const SERVER_ID = process.env.SERVER_ID || 32700;
+
+// On Windows we expect speedtest.exe next to this file; otherwise rely on PATH
+const isWin = process.platform === 'win32';
+const SPEEDTEST_BIN = isWin ? `"${path.join(__dirname, 'speedtest.exe')}"` : 'speedtest';
+
+// Serve the unchanged frontend folder
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+app.get('/api/speedtest', (req, res) => {
+  const cmd = `${SPEEDTEST_BIN} --accept-license --accept-gdpr -s ${SERVER_ID} -f json`;
+  exec(cmd, { maxBuffer: 1024 * 1024 * 10 }, (err, stdout, stderr) => {
+    if (err) return res.status(500).json({ error: err.message, stderr });
+    try {
+      const r = JSON.parse(stdout);
+      res.json({
+        server: { id: SERVER_ID, name: r.server?.name, location: r.server?.location, host: r.server?.host },
+        ping_ms: r.ping?.latency,
+        jitter_ms: r.ping?.jitter,
+        download_Mbps: r.download ? (r.download.bandwidth * 8 / 1e6) : null,
+        upload_Mbps: r.upload ? (r.upload.bandwidth * 8 / 1e6) : null,
+        packetLoss: typeof r.packetLoss === 'number' ? r.packetLoss : null,
+        isp: r.isp || null,
+        interface: r.interface || null,
+        timestamp: r.timestamp
+      });
+    } catch {
+      res.status(500).json({ error: 'Parse error', sample: stdout ? stdout.slice(0, 2000) : '' });
+    }
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Frontend: http://localhost:${PORT}/`);
+  console.log(`API JSON: http://localhost:${PORT}/api/speedtest  (SERVER_ID=${SERVER_ID})`);
+});
