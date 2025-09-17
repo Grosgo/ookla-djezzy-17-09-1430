@@ -1,4 +1,4 @@
-window.API_BASE = 'https://your-app-name.onrender.com';
+window.API_BASE = 'https://ookla-djezzy-17-09-1430.onrender.com/';
 
 // ==========================
 // Gauge & Stats Configuration
