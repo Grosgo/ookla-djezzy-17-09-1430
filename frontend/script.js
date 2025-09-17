@@ -1,4 +1,4 @@
-window.API_BASE = 'http://localhost:8080';
+window.API_BASE = 'https://your-app-name.onrender.com';
 
 // ==========================
 // Gauge & Stats Configuration
