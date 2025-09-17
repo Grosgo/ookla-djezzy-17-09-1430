@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>5G Speed Test</title>
+  <link rel="icon" type="image/gif" href="images/favicon.png">
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="stats-overlay" id="statsOverlay">
+  <div class="stats-content" id="statsContent"></div>
+</div>
+
+  <div class="animated-bg"></div>
+  <canvas id="galaxy-canvas"></canvas>
+
+  <div class="gauge-container">
+    <img src="images/gauge.png" alt="Gauge" class="gauge-base" />
+    <img src="images/needle.png" class="gauge-needle" id="needle" />
+   <!---- <img src="images/Dents.png" class="gauge-dents" id="gauge-dents" /> -->
+    <div id="speedLive"></div>
+  <button id="startButton" class="start-button">Test the Future</button>
+
+   <!---- <button id="startButton">Test the future</button>-->
+  </div>
+
+<div class="stats-panel-wrapper">
+  <img src="images/stats-panel.png" alt="Performance Stats" class="stats-panel-img" />
+  <div class="stats-panel">
+    <h3>Performance Stats</h3>
+    <div><span class="stats-label">Average :&nbsp;&nbsp;</span> <span id="avgValue">0 Mbps</span></div>
+<div><span class="stats-label">Peak :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span id="peakValue">0 Mbps</span></div>
+<div><span class="stats-label">Lowest :&nbsp;&nbsp;&nbsp;&nbsp; </span> <span id="lowValue">0 Mbps</span></div>
+
+  </div>
+</div>
+
+<script>window.API_BASE = 'https://djezzy-ookla-5g-1.onrender.com';</script>
+<script src="script.js"></script>
+
+</body>
+</html>
