@@ -1,4 +1,20 @@
 // server.js — Express app with live SSE progress via Ookla JSONL + JSON endpoints 
+const path = require('path');
+const fs = require('fs');
+
+const SPEEDTEST_BIN = process.platform === 'win32'
+  ? path.join(__dirname, 'speedtest.exe')
+  : path.join(__dirname, 'speedtest');
+
+// Optional: ensure it's executable on Linux (Render)
+try {
+  if (process.platform !== 'win32') {
+    fs.chmodSync(SPEEDTEST_BIN, 0o755);
+  }
+} catch (e) {
+  console.warn('Could not set executable permissions:', e.message);
+}
+
 require('dotenv').config();
 const express = require('express');
 const { spawn, exec } = require('child_process');
@@ -14,7 +30,7 @@ const PORT = parseInt(process.env.PORT || '8080', 10);
 const LEGACY_PORT = parseInt(process.env.LEGACY_PORT || '3000', 10); // unused on Render
 const SERVER_ID = process.env.SERVER_ID || 71582; // e.g., Djezzy Oran
 const isWin = process.platform === 'win32';
-const SPEEDTEST_BIN = isWin ? path.join(__dirname, 'speedtest.exe') : path.join(__dirname, 'speedtest');
+//const SPEEDTEST_BIN = isWin ? path.join(__dirname, 'speedtest.exe') : path.join(__dirname, 'speedtest');
 const FRONTEND_DIR = path.join(__dirname, 'frontend');
 
 // middlewares
