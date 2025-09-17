@@ -19,7 +19,6 @@ require('dotenv').config();
 const express = require('express');
 const { spawn, exec } = require('child_process');
 const http = require('http');
-const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 const os = require('os');
